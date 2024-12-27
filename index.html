@@ -38,10 +38,10 @@
 </head>
 <body>
     <h1>Lawn Care Estimate Tool</h1>
-    <form id="lawnEstimatorForm" action="https://formspree.io/f/xzzzrpbv" method="POST" onsubmit="return submitForm(event);">
+   <form id="lawnEstimatorForm" action="https://formspree.io/f/xzzzrpbv" method="POST" onsubmit="return submitForm(event);">
     <label for="lawnSize">Enter Lawn Size (sq ft):</label>
     <input type="number" id="lawnSize" name="lawnSize" required>
-
+    
     <label for="service">Choose a Service:</label>
     <select id="service" name="service" required>
         <option value="aeration">Aeration</option>
@@ -51,13 +51,14 @@
 
     <label for="email">Enter Your Email:</label>
     <input type="email" id="email" name="email" required>
-
+    
     <label for="phone">Enter Your Phone Number (optional):</label>
     <input type="tel" id="phone" name="phone">
 
     <button type="submit">Get Estimate</button>
 </form>
 
+<div id="results" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;"></div>
     <div id="results" class="results" style="display: none;"></div>
     <div id="disclaimer" class="disclaimer" style="display: none;">
         <p>*This estimate is subject to change depending on the accuracy of the information provided.</p>
