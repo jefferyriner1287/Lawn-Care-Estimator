@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawn Care Estimate Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        label, input, select {
+            display: block;
+            margin-bottom: 15px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .disclaimer {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lawn Care Estimate Tool</h1>
+    <form id="lawnEstimatorForm" onsubmit="event.preventDefault(); calculateEstimate();">
+        <label for="lawnSize">Enter Lawn Size (sq ft):</label>
+        <input type="number" id="lawnSize" name="lawnSize" required>
+        
+        <label for="service">Choose a Service:</label>
+        <select id="service" name="service" required>
+            <option value="aeration">Aeration</option>
+            <option value="8treatments">8 Treatments Per Year</option>
+            <option value="seeding">Lawn Seeding (Fescue Only)</option>
+        </select>
+
+        <label for="email">Enter Your Email:</label>
+        <input type="email" id="email" name="email" required>
+        
+        <label for="phone">Enter Your Phone Number (optional):</label>
+        <input type="tel" id="phone" name="phone">
+
+        <button type="submit">Get Estimate</button>
+    </form>
+
+    <div id="results" class="results" style="display: none;"></div>
+    <div id="disclaimer" class="disclaimer" style="display: none;">
+        <p>*This estimate is subject to change depending on the accuracy of the information provided.</p>
+    </div>
+
+    <script>
+        function calculateEstimate() {
+            const lawnSize = document.getElementById('lawnSize').value;
+            const service = document.getElementById('service').value;
+            const resultsDiv = document.getElementById('results');
+            const disclaimerDiv = document.getElementById('disclaimer');
+
+            let cost = 0;
+            if (service === 'aeration') {
+                cost = Math.max(25 * (lawnSize / 1000), 100);
+            } else if (service === '8treatments') {
+                cost = Math.max(15 * (lawnSize / 1000), 65);
+            } else if (service === 'seeding') {
+                cost = Math.max(70 * (lawnSize / 1000), 189);
+            }
+
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `<h2>Your Estimated Cost: $${cost.toFixed(2)}</h2>`;
+            disclaimerDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
