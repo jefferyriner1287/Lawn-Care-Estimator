@@ -3,86 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lawn Care Estimate Tool</title>
+    <title>Lawn Treatment Estimator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            line-height: 1.6;
             margin: 20px;
-            padding: 20px;
+            padding: 0;
         }
-        form {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        label, input, select {
+        label {
             display: block;
-            margin-bottom: 15px;
+            margin-top: 10px;
         }
         input, select, button {
-            width: 100%;
+            margin-top: 5px;
             padding: 10px;
-            font-size: 1em;
+            width: 100%;
+            box-sizing: border-box;
         }
-        .results {
+        button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #results {
             margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
+            padding: 10px;
+            border: 1px solid #ddd;
             background-color: #f9f9f9;
-        }
-        .disclaimer {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: #555;
         }
     </style>
 </head>
 <body>
-    <h1>Lawn Care Estimate Tool</h1>
-   <form id="lawnEstimatorForm" action="https://formspree.io/f/xzzzrpbv" method="POST" onsubmit="return submitForm(event);">
-    <label for="lawnSize">Enter Lawn Size (sq ft):</label>
-    <input type="number" id="lawnSize" name="lawnSize" required>
-    
-    <label for="service">Choose a Service:</label>
-    <select id="service" name="service" required>
-        <option value="aeration">Aeration</option>
-        <option value="8treatments">8 Treatments Per Year</option>
-        <option value="seeding">Lawn Seeding (Fescue Only)</option>
-    </select>
+    <h1>Lawn Treatment Estimator</h1>
+    <form id="lawnEstimatorForm" action="#" method="POST" onsubmit="submitForm(event);">
+        <label for="lawnSize">Lawn Size (in sq ft):</label>
+        <input type="number" id="lawnSize" name="lawnSize" required placeholder="Enter your lawn size">
 
-    <label for="email">Enter Your Email:</label>
-    <input type="email" id="email" name="email" required>
-    
-    <label for="phone">Enter Your Phone Number (optional):</label>
-    <input type="tel" id="phone" name="phone">
+        <label for="service">Choose a Service:</label>
+        <select id="service" name="service" required>
+            <option value="aeration">Aeration ($25 per 1,000 sq ft, Minimum $100)</option>
+            <option value="9treatments">9 Treatments Per Year (Fertilization + Weed Control, $12 per treatment)</option>
+            <option value="seeding">Lawn Seeding (Fescue Only, $70 per 1,000 sq ft, Minimum $189)</option>
+        </select>
 
-    <button type="submit">Get Estimate</button>
-</form>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email address">
 
-<div id="results" style="display: none; margin-top: 20px; padding: 15px; border: 1px solid #ccc; background-color: #f9f9f9;"></div>
-    <div id="results" class="results" style="display: none;"></div>
-    <div id="disclaimer" class="disclaimer" style="display: none;">
-        <p>*This estimate is subject to change depending on the accuracy of the information provided.</p>
-    </div>
+        <label for="phone">Phone Number:</label>
+        <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+
+        <button type="submit">Get Estimate</button>
+    </form>
+
+    <div id="results" style="display:none;"></div>
 
     <script>
-        function calculateEstimate() {
-            const lawnSize = document.getElementById('lawnSize').value;
-            const service = document.getElementById('service').value;
-            const resultsDiv = document.getElementById('results');
-            const disclaimerDiv = document.getElementById('disclaimer');
-
+        function calculateEstimate(lawnSize, service) {
             let cost = 0;
+            let perTreatmentCost = 0;
+
             if (service === 'aeration') {
                 cost = Math.max(25 * (lawnSize / 1000), 100);
-            } else if (service === '8treatments') {
-                cost = Math.max(15 * (lawnSize / 1000), 65);
+            } else if (service === '9treatments') {
+                perTreatmentCost = Math.max(12 * (lawnSize / 1000), 65);
+                cost = perTreatmentCost * 9; // Total cost for 9 treatments
             } else if (service === 'seeding') {
                 cost = Math.max(70 * (lawnSize / 1000), 189);
             }
+            return { totalCost: cost.toFixed(2), perTreatmentCost: perTreatmentCost.toFixed(2) };
+        }
 
-            resultsDiv.style.display = 'block';
-            resultsDiv.innerHTML = `<h2>Your Estimated Cost: $${cost.toFixed(2)}</h2>`;
-            disclaimerDiv.style.display = 'block';
+        function submitForm(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get input values
+            const lawnSize = document.getElementById('lawnSize').value;
+            const service = document.getElementById('service').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+
+            // Calculate the estimate
+            const { totalCost, perTreatmentCost } = calculateEstimate(lawnSize, service);
+
+            // Show the estimate to the customer
+            const resultDiv = document.getElementById('results');
+            if (service === '9treatments') {
+                resultDiv.innerHTML = `
+                    <h3>Estimated Cost: $${totalCost}</h3>
+                    <p>This includes 9 treatments per year for Fertilization and Weed Control.</p>
+                    <p>Price per treatment: $${perTreatmentCost}</p>
+                    <p>This is an approximate cost and is subject to change depending on the accuracy of the information provided.</p>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <h3>Estimated Cost: $${totalCost}</h3>
+                    <p>This is an approximate cost and is subject to change depending on the accuracy of the information provided.</p>
+                `;
+            }
+            resultDiv.style.display = 'block';
+
+            // Prepare the form data to send via Formspree
+            const formData = {
+                lawnSize: lawnSize,
+                service: service,
+                email: email,
+                phone: phone,
+                totalEstimate: `$${totalCost}`,
+                perTreatmentCost: service === '9treatments' ? `$${perTreatmentCost}` : 'N/A'
+            };
+
+            // Send the form data to Formspree
+            fetch('https://formspree.io/f/xzzzrpbv, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Form submitted successfully.');
+                } else {
+                    console.error('Error submitting form.');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+            });
         }
     </script>
 </body>
